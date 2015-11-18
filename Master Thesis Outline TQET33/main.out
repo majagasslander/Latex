@@ -4,11 +4,15 @@
 \BOOKMARK [1][-]{section.3}{Problem Formulation}{}% 4
 \BOOKMARK [1][-]{section.4}{Approach}{}% 5
 \BOOKMARK [2][-]{subsection.4.1}{Data}{section.4}% 6
-\BOOKMARK [2][-]{subsection.4.2}{Pre processing}{section.4}% 7
-\BOOKMARK [2][-]{subsection.4.3}{Feature Extraction}{section.4}% 8
-\BOOKMARK [2][-]{subsection.4.4}{Classification}{section.4}% 9
-\BOOKMARK [2][-]{subsection.4.5}{Post processing}{section.4}% 10
-\BOOKMARK [2][-]{subsection.4.6}{Evaluation}{section.4}% 11
-\BOOKMARK [1][-]{section.5}{Time Plan}{}% 12
-\BOOKMARK [2][-]{subsection.5.1}{Dates}{section.5}% 13
-\BOOKMARK [1][-]{section.6}{Literature}{}% 14
+\BOOKMARK [2][-]{subsection.4.2}{Preparatory work}{section.4}% 7
+\BOOKMARK [2][-]{subsection.4.3}{Pre processing}{section.4}% 8
+\BOOKMARK [2][-]{subsection.4.4}{Feature Extraction}{section.4}% 9
+\BOOKMARK [3][-]{subsubsection.4.4.1}{Texture}{subsection.4.4}% 10
+\BOOKMARK [3][-]{subsubsection.4.4.2}{Color}{subsection.4.4}% 11
+\BOOKMARK [2][-]{subsection.4.5}{Classification}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.6}{Postprocessing}{section.4}% 13
+\BOOKMARK [2][-]{subsection.4.7}{Evaluation}{section.4}% 14
+\BOOKMARK [1][-]{section.5}{Time Plan}{}% 15
+\BOOKMARK [2][-]{subsection.5.1}{Preliminary dates}{section.5}% 16
+\BOOKMARK [2][-]{subsection.5.2}{Goals for Half-time Control}{section.5}% 17
+\BOOKMARK [1][-]{section.6}{Literature}{}% 18

@@ -1,11 +1,13 @@
 \documentclass{article}
-\usepackage[utf8]{inputenc}
+\usepackage[utf8x]{inputenc}
+\usepackage{fontenc}
 \usepackage{hyperref}
 \usepackage[square,numbers]{natbib}
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage[margin=1.4in]{geometry}
 \usepackage{amssymb, graphics, setspace, mathtools}
+\usepackage{multirow}
 \bibliographystyle{abbrvnat}
 
 
@@ -30,13 +32,13 @@ Fahad Khan: \href{mailto:fahad.khan@liu.se}{fahad.khan@liu.se}
 
 
 \section{Preliminary Title}
+A preliminary title for the master thesis is \emph{Segmentation of Clouds in Satellite Images.} 
 
-A preliminary title for the master thesis is \emph{Texture and Color based Classification of Clouds in Satellite Images using SVM.} 
 \section{Problem Formulation}
-The aim of this thesis is to evaluate methods to segment satellite images into cloud and non-cloud pixels, and compare the result to Vricon's inhouse methods. Different combinations of existing methods for feature extraction and classification will be evaluated.
+The aim of this thesis is to segment satellite images into cloud and non-cloud pixels. Different combinations of existing methods for feature extraction and classification will be evaluated. The goal is to investigate machine learning based approaches for segmenting the pixels.
 
 \section{Approach}
-A preliminary approach for solving the task is to divide the problem into several smaller problems. Each subproblem is described in more detail in the subsections below. The pipeline can be seen in figure \ref{fig:pipeline} below.
+A preliminary approach for solving the task is divided into several subproblems. Each subproblem is described in more detail in the subsections below. The proposed pipeline can be seen in figure \ref{fig:pipeline}.
 
 \begin{figure}[h!]
     \centering
@@ -46,11 +48,14 @@ A preliminary approach for solving the task is to divide the problem into severa
 \end{figure}
 
 \subsection{Data}
-The images that will be used for cloud classification in this thesis is both panchromatic high resolution images, and also an eight-band multispectral imagery, containing various types of landscape and cloud amount. All images will be provided by Vricon. These images will be used to create feature vectors of training data.
+All images used for cloud classification will be provided by Vricon. Each image contains both panchromatic, i.e. black and white, high resolution data, and also an eight band multispectral imagery. From these images the training data are created and represented as a feature vector, each with an assigned class label. Images with various types of landscape and cloud amount will be used for the classification.
+
+\subsection{Preparatory work}
+Before it is possible to start working on the actual problem, some minor administration has to be done. For example creating a working directory and a user in Vricons system. Also, since a lot of their own functions will be used for handling the images, some small amount of time will be used to understand their code.
 
 \subsection{Pre processing}
-To make the classification easier the images are pre processed. This will be done by tiling the images into smaller tiles. An alternative to tiling is to do a superpixel segmentation that will be taken into consideration. Also, a histogram equalization will be applied. This will flatten the greylevel histogram of the image so that all intensities are as equal as possible and thereby the image contrast is increased.
-
+To make the classification easier the images are pre processed. This will be done by tiling the images into smaller tiles. If necessary, a histogram equalization will be applied. This will flatten the greylevel histogram of the image so that all intensities are as equal as possible and thereby the image contrast is increased.
+%An alternative to tiling is to do a superpixel segmentation that will be taken into consideration.
 %\subsubsection{Tiling}
 %First the image $I$ is divided into smaller tiles, $I_k$. To avoid wrong classification in the tiles containing cloud boundaries, overlapping tiles is used. 
 
@@ -60,11 +65,12 @@ To make the classification easier the images are pre processed. This will be don
 %\subsubsection{Histogram Equalization}
 
 \subsection{Feature Extraction}
-After the pre processing is done it is time to perform the feature extraction. A good feature clearly seperates the two classes from each other. Texture and color are the two features that will recieve the biggest focus in this master thesis. Some suggestions for features extractions to test are:
+After the pre processing is done it is time to perform the feature extraction. A good feature clearly seperates the two classes from each other. Texture and color are the two features that will recieve the biggest focus in this master thesis. 
+\subsubsection{Texture}
 
 \begin{itemize}
 \item Gabor Filters: \\
-A set of Gabor filters with different frequencies and orientation might be good to extract  texture features from the clouds.
+A set of Gabor filters with different frequencies and orientation might be good to extract texture features from the clouds  \citep{gabor}.
 The equation for a complex Gabor filter looks like follows:
 \begin{equation}
 g(x, y; \lambda, \theta, \psi, \sigma, \gamma) = e^{-\frac{x'^2 + \gamma^2y'^2}{2\sigma^2}}e^{i(2\pi\frac{x'}{\lambda} + \psi)}
@@ -75,21 +81,19 @@ and \\
 $y' = -x\sin\theta + y\cos\theta$
 
 \item Homogeneous Texture Descriptor: \\
-Clouds have a very homogeneous texture, so the Homogeneous Texture Descriptor (HTD) might be good to extract texture features in the clouds. It is based on computing the local spatial-frequency statistics of the texture.
+Clouds have a very homogeneous texture, so the Homogeneous Texture Descriptor (HTD) might be good to extract texture features in the clouds. It is based on computing the local spatial-frequency statistics of the texture, \citep{htd}.
 
 \item Grey level co-occurrence matrix: \\
 A grey level co-occurrence matrix (GLCM) is a histogram of co-occurring greyscale values at a given offset over an image. The GLCM functions characterize the texture of an image by calculating how often pairs of pixels with specific values and in a specified spatial relationship occur in an image.
 
-\item Color: \\
-Since the clouds often differ in color compared to other areas with simliar texture (for example water) it might be good to use color as an feature for the classification. 
+\item Local Binary Pattern \citep{LBP}: \\ 
+In Local Binary Pattern (LBP), each pixel in an image tile is compared to its 8 neighbouring pixels. For each tile a histogram is computed.
+\item Histogram of Oriented Gradients \citep{hog}: \\
+The Histogram of Oriented Gradients (HOG) is a feature descriptor that counts the occurences of gradient orientation in a local area of an image.
 \end{itemize}
-Additional features that is discovered during the work might be tested as well.
+\subsubsection{Color}
+Since the clouds often differ in color compared to other areas with similar texture (for example water), color might be a good feature for the classification. Two methods for color extraction that will be tested is RGB histogram, and Color Names. Color Naming is the action of assigning linguistic color labels to image pixels \citep{colornames}.
 
-%\subsubsection{Homogeneous Texture Descriptor}
-
-%\subsubsection{Grey level co-occurrence matrix}
-
-%\subsubsection{Color}
 
 \subsection{Classification}
 For the classification Support Vector Machines (SVM) will be uesd. SVM is a supervised learning method. 
@@ -120,13 +124,13 @@ Equation \ref{eq:hyp} can be rewritten as
 y_{i}(\textbf{w}^{T}\textbf{x}_{i} + b) \geq 1, \text{for all $1 \leq i \leq k$}
 \end{equation}
 
-which gives an optimization problem: \\
+which gives an optimization problem: 
 
 \begin{equation}
 \min_{\textbf{w},b} \dfrac{1}{2}\textbf{w}^{T}\textbf{w}
 \end{equation}
 
-subject to (for any $ i = 1,...,k $)
+subject to (for all $ i = 1,...,k $)
 
 \begin{equation*}
 y_{i}(\textbf{w}^{T}\textbf{x}_{i} + b) \geq 1
@@ -137,7 +141,7 @@ where
 \begin{equation*}
 \phi(\textbf{x}_{i}) = (\phi_{1}(\textbf{x}_{i}), \phi_{2}(\textbf{x}_{i}),...)
 \end{equation*}
-The new equation is:
+Also a slack variable is introduced to allow mislabeled examples. The optimization becomes a trade off between a large margin and a small error penalty. The new equation is:
 
 \begin{equation}
 \min_{\textbf{w},b, \xi} \dfrac{1}{2}\textbf{w}^{T}\textbf{w} + C\sum_{1 = 1}^{k}\xi_{i}
@@ -145,12 +149,13 @@ The new equation is:
 \begin{equation*}
 \xi_{i} \geq 0, i = 1,...,k
 \end{equation*}
-subject to (for any $ i = 1,...,k $)
+subject to (for all $ i = 1,...,k $)
 
 \begin{equation*}
 y_{i}(\textbf{w}^{T}\phi(\textbf{x}_{i}) + b) \geq 1 - \xi_{i}
 \end{equation*}
-Some common kernels that will be tested during this thesis are: \\
+
+Some common kernels that will be tested during this thesis are:
 \begin{itemize}
 \item Linear Kernel: $K(\textbf{x}_i,\textbf{x}_{j}) = \textbf{x}_i\cdot\textbf{x}_{j}$
 
@@ -161,12 +166,44 @@ Some common kernels that will be tested during this thesis are: \\
 \item Sigmoid Kernel: $K(\textbf{x}_i,\textbf{x}_{j}) = \tanh(\gamma\textbf{x}_i\cdot\textbf{x}_{j} + r)$
 \end{itemize}
 
-\subsection{Post processing}
+\subsection{Postprocessing}
 
-After the classification is done some post processing might need to be implemented to clean up some of the wrongly classified objects. For example a shape based post processing can be used to remove objects that are to "perfect" from the cloud class.
+After the classification is done some postprocessing might need to be implemented to clean up some of the wrongly classified objects. Markov Random Fields (MRFs) is an effective classification postprocessing strategy, that smoothes the classification and provides more homogenous results \citep{mrf}. The MRF model can be written 
+\begin{equation*}
+E(X,C) = -\sum_{x\in X}\ln(p_{x,i}) + \beta\sum_{y\in N_{x}}[1 - \delta(C(x), C(y)]
+\end{equation*}
+where $X$ and $C$ denotes the image and its labeling space, $N_{x}$ represents the neighbourhood centered by pixel $x$. $C(x)$ and $C(y)$ are the labels of pixel x and y. $\delta(x,y)$ is the Kronecker function, i.e. $\delta(x,y) = a$ for $x = y$ and $\delta(x,y) = 0$ for $x \neq y$, used to penalize the change of labels in the neighbourhood $N_{x}$.
 
 \subsection{Evaluation}
 When the classification is done the result needs to be evaluated to know how the algorithm performed. This will be done by comparing the classified images to a hand labeled ground truth. Some ground truth already exists, and some might need to be hand labeled during the thesis. 
+Two measures for evaluation will be used:
+\begin{itemize}
+\item Confusion Matrix: \\
+A Confusion Matrix is a matrix containing the counts of correctly and incorrectly labeled data, see table \ref{confmat}.
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{cccc}
+		& \multicolumn{3}{c}{\textbf{Predicted Class}} \\ \cline{2-4} 
+		\multicolumn{1}{c|}{\multirow{6}{*}{\textbf{\rotatebox[origin=c]{90}{Actual Class}}}} & \multicolumn{1}{c|}{\multirow{2}{*}{}} & \multicolumn{1}{c|}{\multirow{2}{*}{Class 1}} & \multicolumn{1}{c|}{\multirow{2}{*}{Class 2}} \\
+		\multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} \\ \cline{2-4} 
+		\multicolumn{1}{c|}{} & \multicolumn{1}{c|}{\multirow{2}{*}{Class 1}} & \multicolumn{1}{c|}{\multirow{2}{*}{$f_{11}$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$f_{12}$}} \\
+		\multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} \\ \cline{2-4} 
+		\multicolumn{1}{c|}{} & \multicolumn{1}{c|}{\multirow{2}{*}{Class 2}} & \multicolumn{1}{c|}{\multirow{2}{*}{$f_{21}$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$f_{22}$}} \\
+		\multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} \\ \cline{2-4} 
+	\end{tabular}
+	\caption{A Confusion Matrix between 2 classes}
+	\label{confmat}
+\end{table}
+%\rotatebox[origin=c]{90}{Actual Class}
+
+
+
+\item Receiver operating characteristic: \\
+A receiver operating characteristic (ROC), or ROC curve is a graphical plot that illustrates the performance of a binary classifier. The plot is generated by plotting the true positiv rate against the false positiv rate at different threshold settings.
+\end{itemize}
+
+
 
 \section{Time Plan}
 The given task has been divided into several sub tasks to easier plan the work. The estimated time for each sub task is listed in the time plan in figure \ref{fig:timeplan} below.
@@ -187,11 +224,14 @@ Note that week 53-2 and week 11-12 are marked red because of Christmas break and
 %\item Meetings supervisor
 %\end{itemize}
 
-\subsection{Dates}
+\subsection{Preliminary dates}
 \begin{itemize}
 \item Half-time Control: February 3, 2016.
 \item Presentation: April 20, 2016.
 \end{itemize}
+
+\subsection{Goals for Half-time Control}
+At the half-time control, preliminary dated to February 3, the main goal is to have the major part of the theory written in the master thesis report. Some preliminary results from the first classifications hopefully will be shown aswell.
 
 \begin{figure}[h!]
     \centering
@@ -207,45 +247,66 @@ Note that week 53-2 and week 11-12 are marked red because of Christmas break and
 \begin{thebibliography}{9}
 
 \bibitem{cloudcolor} 
-Emre Ba\c{s}eski and \c{C}a\v{g}lar \c{S}enaras. 
-\textit{Texture and Color Based Cloud Detection.}
+Emre Ba\c{s}eski and \c{C}a\v{g}lar \c{S}enaras, 
+\textit{Texture and Color Based Cloud Detection.} \\
 HAVELSAN A.S., 2015.
  
 \bibitem{cloudtexture} 
-H.K. Chethan, R. Raghavendra and G. Kumar Hemantha. 
+H.K. Chethan, R. Raghavendra and G. Kumar Hemantha, 
 \textit{Texture based Approach for Cloud Classification using SVM.} \\
 International Conference on Advances in Recent Technologies in Communication and Computing, 2009. 
  
 \bibitem{canny} 
-J. Canny. 
+J. Canny,
 \textit{A computational Approach to Edge Detection.} \\
 IEEE Transactions on Pattern Analysis and Machine Intelligence, 1986. 
  
 \bibitem{woods} 
-Rafael C. Gonzales and Richard E. Woods. 
+Rafael C. Gonzales and Richard E. Woods,
 \textit{Digital Image Processing.} \\
 Pearson Education, Inc., 2008.
  
 \bibitem{gabor} 
-D. Zheng, Y. Zhao and j. Wang. 
+D. Zheng, Y. Zhao and j. Wang, 
 \textit{Feature Extraction using a Gabor Filter Family.} \\
 Proceedings of the 6th IASTED International Conference, Signal and Image Processing, 2004. 
 
-\bibitem{programming} 
-Jan Erik Solem. 
-\textit{Programming Computer Vision with Python.} \\
-Creative Commons, 2004.
+%\bibitem{programming} 
+%Jan Erik Solem. 
+%\textit{Programming Computer Vision with Python.} \\
+%Creative Commons, 2004.
 
 \bibitem{htd} 
-Y. Man Ro, M. Kim, H.K. Kang, B.S. Manjunath and J. Kim
+Y. Man Ro, M. Kim, H.K. Kang, B.S. Manjunath and J. Kim,
 \textit{MPEG-7 Homogeneous Texture Descriptor.} \\
 ETRI Journal, volume 23, Number 2, 2001. 
 
 \bibitem{svm} 
-A. Ben-Hur and J. Weston
+A. Ben-Hur and J. Weston,
 \textit{A User's Guide to Support Vector Machines.} \\
 ETRI Journal, volume 23, Number 2, 2001. 
 
+\bibitem{colornames}
+J. van de Weijer, C. Schmid, J. Verbeek and D. Larlus,
+\textit{Learning Color Names for Real-World Applications} \\
+IEEE Transactions in Image Processing,2009.
+
+\bibitem{LBP}
+Timo Ojala, Matti Pietikäinen and Topi Mäenpää,
+\textit{Multiresolution Gray-Scale and Rotation Invariant Texture Classification
+	with Local Binary Patterns} \\
+{IEEE} Trans. Pattern Anal. Mach. Intell., volume 24, Number 7, 2009.
+
+\bibitem{mrf}
+Xin Huang, Qikai Lu, Liangpei Zhang and Antonio Plaza,
+\textit{New Postprocesssing Methods for Remote Sensing Image Classification: A Systematic Study} \\
+{IEEE} Transactions on Geoscience and Remote Sensing, november 2014.
+
+\bibitem{hog}
+Navneet Dalal and Bill Triggs,
+\textit{Histograms of Oriented Gradients for Human Detection} \\
+International Conference on Computer Vision \& Pattern Recognition, volume 2, 2009.
+\\\texttt{http://lear.inrialpes.fr/pubs/2005/DT05}
 %\bibitem{knuthwebsite} 
 %Knuth: Computers and Typesetting,
 %\\\texttt{http://www-cs-faculty.stanford.edu/\~{}uno/abcde.html}
