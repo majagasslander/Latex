@@ -35,8 +35,7 @@ Fahad Khan: \href{mailto:fahad.khan@liu.se}{fahad.khan@liu.se}
 A preliminary title for the master thesis is \emph{Segmentation of Clouds in Satellite Images.} 
 
 \section{Problem Formulation}
-The aim of this thesis is to segment satellite images into cloud and non-cloud pixels. Different combinations of existing methods for feature extraction and classification will be evaluated. The goal is to investigate machine learning based approaches for segmenting the pixels.
-
+The aim of this thesis is to investigate machine learning based approaches for segmenting satellite images into cloud and non-cloud pixels. Different combinations of existing methods for feature extraction and classification will be evaluated.
 \section{Approach}
 A preliminary approach for solving the task is divided into several subproblems. Each subproblem is described in more detail in the subsections below. The proposed pipeline can be seen in figure \ref{fig:pipeline}.
 
@@ -172,7 +171,7 @@ After the classification is done some postprocessing might need to be implemente
 \begin{equation*}
 E(X,C) = -\sum_{x\in X}\ln(p_{x,i}) + \beta\sum_{y\in N_{x}}[1 - \delta(C(x), C(y)]
 \end{equation*}
-where $X$ and $C$ denotes the image and its labeling space, $N_{x}$ represents the neighbourhood centered by pixel $x$. $C(x)$ and $C(y)$ are the labels of pixel x and y. $\delta(x,y)$ is the Kronecker function, i.e. $\delta(x,y) = a$ for $x = y$ and $\delta(x,y) = 0$ for $x \neq y$, used to penalize the change of labels in the neighbourhood $N_{x}$.
+where $X$ and $C$ denotes the image and its labeling space, $N_{x}$ represents the neighbourhood centered by pixel $x$. $C(x)$ and $C(y)$ are the labels of pixel x and y. $\delta(x,y)$ is the Kronecker function, i.e. $\delta(x,y) = 1$ for $x = y$ and $\delta(x,y) = 0$ for $x \neq y$, used to penalize the change of labels in the neighbourhood $N_{x}$. $p_{x,i}$ is the probability of pixel $x$ belonging to class $i$.
 
 \subsection{Evaluation}
 When the classification is done the result needs to be evaluated to know how the algorithm performed. This will be done by comparing the classified images to a hand labeled ground truth. Some ground truth already exists, and some might need to be hand labeled during the thesis. 
